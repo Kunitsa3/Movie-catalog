@@ -1,18 +1,31 @@
-import { Body, Controller, Delete, HttpCode, Post } from '@nestjs/common';
-import { AuthDto } from './dto/auth.dto';
+import {
+  Body,
+  Req,
+  Controller,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthenticationService } from './auth.service';
+import RegisterDto from './dto/auth.dto';
+import RequestWithUser from './requestWithUser.interface';
+import { LocalAuthenticationGuard } from './localAuthentication.guard';
 
-@Controller('auth')
-export class AuthController {
+@Controller('authentication')
+export class AuthenticationController {
+  constructor(private readonly authenticationService: AuthenticationService) {}
+
   @Post('register')
-  async register(@Body() dto: AuthDto) {}
+  async register(@Body() registrationData: RegisterDto) {
+    return this.authenticationService.register(registrationData);
+  }
 
   @HttpCode(200)
-  @Post('login')
-  async login(@Body() dto: AuthDto) {}
-
-  @Post('changeLoginDetails')
-  async changeLoginDetails(@Body() dto: AuthDto) {}
-
-  @Delete('delete')
-  async delete(@Body() dto: AuthDto) {}
+  @UseGuards(LocalAuthenticationGuard)
+  @Post('log-in')
+  async logIn(@Req() request: RequestWithUser) {
+    const user = request.user;
+    user.password = undefined;
+    return user;
+  }
 }
