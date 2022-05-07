@@ -20,8 +20,15 @@ export class WishlistService {
     return newWishList;
   }
 
-  async getById(id: string) {
-    const wishlist = await this.wishlistsRepository.findOne({ where: { id } });
+  async getAllWishlists() {
+    return this.wishlistsRepository.find({ relations: ['movies'] });
+  }
+
+  async getWishlistById(id: string) {
+    const wishlist = await this.wishlistsRepository.findOne({
+      where: { id },
+      relations: ['movies'],
+    });
     if (wishlist) {
       return wishlist;
     }
@@ -35,6 +42,7 @@ export class WishlistService {
     await this.wishlistsRepository.update(id, wishlist);
     const updatedWishlist = await this.wishlistsRepository.findOne({
       where: { id },
+      relations: ['movies'],
     });
     if (updatedWishlist) {
       return updatedWishlist;
@@ -43,16 +51,47 @@ export class WishlistService {
   }
 
   async addMovieToWishlist(id: string, movieData: MovieDto) {
-    const newMovie = await this.movieService.create(movieData);
     const currentWishlist = await this.wishlistsRepository.findOne({
       where: { id },
+      relations: ['movies'],
     });
-    await this.wishlistsRepository.update(id, {
-      ...currentWishlist,
-      movies: [...currentWishlist.movies, newMovie],
-    });
-    const updatedWishlist = await this.wishlistsRepository.findOne({
+    const { externalId } = movieData;
+
+    if (
+      !currentWishlist.movies.find((movie) => movie.externalId === externalId)
+    ) {
+      const newMovie = await this.movieService.create(movieData);
+      const updatedWishlist = await this.wishlistsRepository.save({
+        ...currentWishlist,
+        movies: [...currentWishlist.movies, newMovie],
+      });
+      if (updatedWishlist) {
+        return updatedWishlist;
+      }
+      throw new HttpException('Wishlist not found', HttpStatus.NOT_FOUND);
+    } else {
+      throw new HttpException(
+        'This movie has already been added to wishlist',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  async deleteMovieFromWishlist(id: string, movieData: MovieDto) {
+    const currentWishlist = await this.wishlistsRepository.findOne({
       where: { id },
+      relations: ['movies'],
+    });
+    const { externalId } = movieData;
+    const newMoviesList = currentWishlist.movies.filter((movie) => {
+      console.log(movie.externalId, externalId);
+      return movie.externalId !== externalId;
+    });
+    console.log(newMoviesList);
+
+    const updatedWishlist = await this.wishlistsRepository.save({
+      ...currentWishlist,
+      movies: [...(newMoviesList || [])],
     });
     if (updatedWishlist) {
       return updatedWishlist;
@@ -61,6 +100,14 @@ export class WishlistService {
   }
 
   async deleteWishlist(id: string) {
+    const currentWishlist = await this.wishlistsRepository.findOne({
+      where: { id },
+      relations: ['movies'],
+    });
+    await this.wishlistsRepository.save({
+      ...currentWishlist,
+      movies: [],
+    });
     const deleteResponse = await this.wishlistsRepository.delete(id);
     if (!deleteResponse.affected) {
       throw new HttpException('Wishlist not found', HttpStatus.NOT_FOUND);

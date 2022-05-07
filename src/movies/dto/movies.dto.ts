@@ -1,5 +1,5 @@
 export class MovieDto {
-  externalId: number;
+  externalId: string;
 }
 
 export default MovieDto;

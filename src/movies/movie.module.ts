@@ -8,4 +8,4 @@ import { MovieService } from './movie.service';
   providers: [MovieService],
   exports: [MovieService],
 })
-export class WishListModule {}
+export class MovieModule {}

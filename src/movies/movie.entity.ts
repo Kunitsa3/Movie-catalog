@@ -13,7 +13,7 @@ class Movie {
   public id: string;
 
   @Column()
-  public externalId: number;
+  public externalId: string;
 
   @ManyToMany(() => Wishlist, (wishlist: Wishlist) => wishlist.movies)
   @JoinTable()
