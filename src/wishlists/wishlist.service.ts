@@ -51,11 +51,11 @@ export class WishlistService {
   }
 
   async addMovieToWishlist(id: string, movieData: MovieDto) {
+    const { externalId } = movieData;
     const currentWishlist = await this.wishlistsRepository.findOne({
       where: { id },
       relations: ['movies'],
     });
-    const { externalId } = movieData;
 
     if (
       !currentWishlist.movies.find((movie) => movie.externalId === externalId)

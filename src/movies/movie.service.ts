@@ -12,9 +12,18 @@ export class MovieService {
   ) {}
 
   async create(movieData: MovieDto) {
-    const newMovie = this.moviesRepository.create(movieData);
-    await this.moviesRepository.save(newMovie);
-    return newMovie;
+    const { externalId } = movieData;
+    const currentMovieFromDatabase = await this.moviesRepository.findOne({
+      where: { externalId },
+      relations: ['wishlists'],
+    });
+    if (currentMovieFromDatabase) {
+      return currentMovieFromDatabase;
+    } else {
+      const newMovie = this.moviesRepository.create(movieData);
+      await this.moviesRepository.save(newMovie);
+      return newMovie;
+    }
   }
 
   async deleteMovie(id: string) {

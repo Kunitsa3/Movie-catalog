@@ -4,9 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import RegisterDto from './dto/auth.dto';
 import { TokenPayload } from './tokenPayload.interface';
+import * as bcrypt from 'bcrypt';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 @Injectable()
