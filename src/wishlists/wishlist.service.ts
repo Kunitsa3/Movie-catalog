@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import MovieDto from 'src/movies/dto/movies.dto';
+import { MovieInput } from 'src/movies/dto/movies.input';
 import { MovieService } from 'src/movies/movie.service';
 import { Repository } from 'typeorm';
-import WishlistDto from './dto/wishlist.dto';
+import { CreateWishlistInput, WishlistInput } from './dto/wishlist.input';
 import Wishlist from './wishlist.entity';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class WishlistService {
     private wishlistsRepository: Repository<Wishlist>,
   ) {}
 
-  async create(wishlistData: WishlistDto) {
+  async create(wishlistData: CreateWishlistInput) {
     const newWishList = await this.wishlistsRepository.create(wishlistData);
     await this.wishlistsRepository.save(newWishList);
     return newWishList;
@@ -38,7 +38,8 @@ export class WishlistService {
     );
   }
 
-  async updateWishlist(id: string, wishlist: WishlistDto) {
+  async updateWishlist(wishlist: WishlistInput) {
+    const { id } = wishlist;
     await this.wishlistsRepository.update(id, wishlist);
     const updatedWishlist = await this.wishlistsRepository.findOne({
       where: { id },
@@ -50,15 +51,18 @@ export class WishlistService {
     throw new HttpException('Wishlist not found', HttpStatus.NOT_FOUND);
   }
 
-  async addMovieToWishlist(id: string, movieData: MovieDto) {
-    const { externalId } = movieData;
+  async addMovieToWishlist(wishlistData: WishlistInput, movieData: MovieInput) {
+    const { externalId: movieExternalId } = movieData;
+    const { id } = wishlistData;
     const currentWishlist = await this.wishlistsRepository.findOne({
       where: { id },
       relations: ['movies'],
     });
 
     if (
-      !currentWishlist.movies.find((movie) => movie.externalId === externalId)
+      !currentWishlist.movies.find(
+        (movie) => movie.externalId === movieExternalId,
+      )
     ) {
       const newMovie = await this.movieService.create(movieData);
       const updatedWishlist = await this.wishlistsRepository.save({
@@ -77,7 +81,11 @@ export class WishlistService {
     }
   }
 
-  async deleteMovieFromWishlist(id: string, movieData: MovieDto) {
+  async deleteMovieFromWishlist(
+    wishlistData: WishlistInput,
+    movieData: MovieInput,
+  ) {
+    const { id } = wishlistData;
     const currentWishlist = await this.wishlistsRepository.findOne({
       where: { id },
       relations: ['movies'],
@@ -99,7 +107,8 @@ export class WishlistService {
     throw new HttpException('Wishlist not found', HttpStatus.NOT_FOUND);
   }
 
-  async deleteWishlist(id: string) {
+  async deleteWishlist(wishlistData: WishlistInput) {
+    const { id } = wishlistData;
     const currentWishlist = await this.wishlistsRepository.findOne({
       where: { id },
       relations: ['movies'],

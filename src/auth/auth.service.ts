@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
-import RegisterDto from './dto/auth.dto';
 import { TokenPayload } from './tokenPayload.interface';
 import * as bcrypt from 'bcrypt';
+import RegisterInput from './dto/auth.input';
 
 const saltRounds = 10;
 
@@ -16,7 +16,7 @@ export class AuthenticationService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async register(registrationData: RegisterDto) {
+  public async register(registrationData: RegisterInput) {
     const hashedPassword = await bcrypt.hash(
       registrationData.password,
       saltRounds,

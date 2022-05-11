@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import MovieDto from './dto/movies.dto';
+import { MovieInput } from './dto/movies.input';
 import Movie from './movie.entity';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class MovieService {
     private moviesRepository: Repository<Movie>,
   ) {}
 
-  async create(movieData: MovieDto) {
+  async create(movieData: MovieInput) {
     const { externalId } = movieData;
     const currentMovieFromDatabase = await this.moviesRepository.findOne({
       where: { externalId },

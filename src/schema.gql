@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: String!
+  email: String!
+  username: String!
+  password: String!
+}
+
 type Wishlist {
   id: String!
   name: String!
@@ -17,4 +24,39 @@ type Movie {
 type Query {
   wishlists: [Wishlist!]!
   wishlist(id: String!): Wishlist!
+}
+
+type Mutation {
+  register(userData: RegisterInput!): User!
+  logIn(userData: LogInInput!): User!
+  logOut: User!
+  createWishlist(wishlistData: CreateWishlistInput!): Wishlist!
+  updateWishlist(wishlistData: WishlistInput!): Wishlist!
+  addMovieToWishlist(wishlistData: WishlistInput!, movieData: MovieInput!): Wishlist!
+  deleteMovieFromWishlist(wishlistData: WishlistInput!, movieData: MovieInput!): Wishlist!
+  deleteWishlist(wishlistData: WishlistInput!): Wishlist!
+}
+
+input RegisterInput {
+  email: String!
+  username: String!
+  password: String!
+}
+
+input LogInInput {
+  email: String!
+  password: String!
+}
+
+input CreateWishlistInput {
+  name: String!
+}
+
+input WishlistInput {
+  id: String!
+  name: String!
+}
+
+input MovieInput {
+  externalId: String!
 }
