@@ -1,14 +1,18 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { GraphqlJwtAuthGuard } from 'src/auth/graphql-jwt-auth.guard';
 import { MovieInput } from 'src/movies/dto/movies.input';
+import { MovieService } from 'src/movies/movie.service';
 import { CreateWishlistInput, WishlistInput } from './dto/wishlist.input';
 import Wishlist from './wishlist.entity';
 import { WishlistService } from './wishlist.service';
 
 @Resolver(() => Wishlist)
 export class WishlistsResolver {
-  constructor(private wishlistService: WishlistService) {}
+  constructor(
+    private wishlistService: WishlistService,
+    private movieService: MovieService,
+  ) {}
 
   @Query(() => [Wishlist])
   @UseGuards(GraphqlJwtAuthGuard)

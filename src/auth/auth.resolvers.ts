@@ -1,4 +1,3 @@
-import { Res } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { Response } from 'express';
 import User from 'src/users/user.entity';

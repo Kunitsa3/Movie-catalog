@@ -1,6 +1,6 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import * as Joi from 'joi';
 import { join } from 'path';
@@ -19,13 +19,6 @@ import { WishListModule } from './wishlists/wishlist.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ req, res }) => ({ req, res }),
     }),
-    // GraphQLModule.forRootAsync<ApolloDriverConfig>({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (configService: ConfigService) => ({
-    //     playground: Boolean(configService.get('GRAPHQL_PLAYGROUND')),
-    //   }),
-    // }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         GRAPHQL_PLAYGROUND: Joi.number(),

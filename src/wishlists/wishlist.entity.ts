@@ -1,5 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import User from 'src/users/user.entity';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import Movie from '../movies/movie.entity';
 
 @Entity()
@@ -16,6 +23,9 @@ class Wishlist {
   @ManyToMany(() => Movie, (movie: Movie) => movie.wishlists)
   @Field((type) => [Movie])
   public movies: Movie[];
+
+  @ManyToOne(() => User, (user: User) => user.wishlists)
+  public user: User;
 }
 
 export default Wishlist;

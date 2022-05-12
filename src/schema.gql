@@ -2,11 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
+type Movie {
   id: String!
-  email: String!
-  username: String!
-  password: String!
+  externalId: String!
+  wishlists: [Wishlist!]!
 }
 
 type Wishlist {
@@ -15,13 +14,40 @@ type Wishlist {
   movies: [Movie!]!
 }
 
-type Movie {
+type User {
   id: String!
-  externalId: String!
-  wishlists: [Wishlist!]!
+  email: String!
+  username: String!
+  password: String!
+}
+
+type APIMovieData {
+  page: Int!
+  results: [APIMovie!]!
+  total_pages: Int!
+  total_results: Int!
+}
+
+type APIMovie {
+  adult: String!
+  backdrop_path: String!
+  genre_ids: [Int!]!
+  id: Int!
+  original_language: String!
+  original_title: String!
+  overview: String!
+  popularity: Float!
+  poster_path: String!
+  release_date: String!
+  title: String!
+  video: Boolean!
+  vote_average: Float!
+  vote_count: Int!
 }
 
 type Query {
+  popularMovies(page: Int!): APIMovieData!
+  upcomingMovies(page: Int!): APIMovieData!
   wishlists: [Wishlist!]!
   wishlist(id: String!): Wishlist!
 }
