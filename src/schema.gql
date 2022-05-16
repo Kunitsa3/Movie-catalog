@@ -12,13 +12,14 @@ type Wishlist {
   id: String!
   name: String!
   movies: [Movie!]!
+  user: User!
 }
 
 type User {
   id: String!
   email: String!
   username: String!
-  password: String!
+  wishlists: [Wishlist!]!
 }
 
 type APIMovieData {

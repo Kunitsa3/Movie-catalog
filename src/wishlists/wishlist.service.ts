@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MovieInput } from 'src/movies/dto/movies.input';
 import { MovieService } from 'src/movies/movie.service';
+import UserDto from 'src/users/dto/users.dto';
+import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateWishlistInput, WishlistInput } from './dto/wishlist.input';
 import Wishlist from './wishlist.entity';
@@ -10,25 +12,38 @@ import Wishlist from './wishlist.entity';
 export class WishlistService {
   constructor(
     private readonly movieService: MovieService,
+    private readonly userService: UsersService,
     @InjectRepository(Wishlist)
     private wishlistsRepository: Repository<Wishlist>,
   ) {}
 
-  async create(wishlistData: CreateWishlistInput) {
-    const newWishList = await this.wishlistsRepository.create(wishlistData);
+  async create(wishlistData: CreateWishlistInput, user: UserDto) {
+    const newWishList = await this.wishlistsRepository.create({
+      ...wishlistData,
+      user,
+    });
     await this.wishlistsRepository.save(newWishList);
     return newWishList;
   }
 
-  async getAllWishlists() {
-    return this.wishlistsRepository.find({ relations: ['movies'] });
+  async getAllWishlists(id: string) {
+    const user = await this.userService.getById(id);
+    return user.wishlists;
   }
 
-  async getWishlistById(id: string) {
+  async getWishlistById(id: string, userId: string) {
     const wishlist = await this.wishlistsRepository.findOne({
       where: { id },
-      relations: ['movies'],
+      relations: ['movies', 'user'],
     });
+
+    if (wishlist.user.id !== userId) {
+      throw new HttpException(
+        'The user doesn`t have a wishlist with this id',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     if (wishlist) {
       return wishlist;
     }
@@ -38,8 +53,10 @@ export class WishlistService {
     );
   }
 
-  async updateWishlist(wishlist: WishlistInput) {
+  async updateWishlist(wishlist: WishlistInput, userId: string) {
     const { id } = wishlist;
+
+    await this.getWishlistById(id, userId);
     await this.wishlistsRepository.update(id, wishlist);
     const updatedWishlist = await this.wishlistsRepository.findOne({
       where: { id },
@@ -51,13 +68,14 @@ export class WishlistService {
     throw new HttpException('Wishlist not found', HttpStatus.NOT_FOUND);
   }
 
-  async addMovieToWishlist(wishlistData: WishlistInput, movieData: MovieInput) {
+  async addMovieToWishlist(
+    wishlistData: WishlistInput,
+    movieData: MovieInput,
+    userId: string,
+  ) {
     const { externalId: movieExternalId } = movieData;
     const { id } = wishlistData;
-    const currentWishlist = await this.wishlistsRepository.findOne({
-      where: { id },
-      relations: ['movies'],
-    });
+    const currentWishlist = await this.getWishlistById(id, userId);
 
     if (
       !currentWishlist.movies.find(
@@ -84,18 +102,15 @@ export class WishlistService {
   async deleteMovieFromWishlist(
     wishlistData: WishlistInput,
     movieData: MovieInput,
+    userId: string,
   ) {
     const { id } = wishlistData;
-    const currentWishlist = await this.wishlistsRepository.findOne({
-      where: { id },
-      relations: ['movies'],
-    });
+    const currentWishlist = await this.getWishlistById(id, userId);
     const { externalId } = movieData;
     const newMoviesList = currentWishlist.movies.filter((movie) => {
       console.log(movie.externalId, externalId);
       return movie.externalId !== externalId;
     });
-    console.log(newMoviesList);
 
     const updatedWishlist = await this.wishlistsRepository.save({
       ...currentWishlist,
@@ -107,12 +122,9 @@ export class WishlistService {
     throw new HttpException('Wishlist not found', HttpStatus.NOT_FOUND);
   }
 
-  async deleteWishlist(wishlistData: WishlistInput) {
+  async deleteWishlist(wishlistData: WishlistInput, userId: string) {
     const { id } = wishlistData;
-    const currentWishlist = await this.wishlistsRepository.findOne({
-      where: { id },
-      relations: ['movies'],
-    });
+    const currentWishlist = await this.getWishlistById(id, userId);
     await this.wishlistsRepository.save({
       ...currentWishlist,
       movies: [],

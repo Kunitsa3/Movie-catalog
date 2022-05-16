@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import Wishlist from 'src/wishlists/wishlist.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -17,11 +17,11 @@ class User {
   @Column()
   public username: string;
 
-  @Field()
   @Column()
   public password: string;
 
   @OneToMany(() => Wishlist, (wishlist: Wishlist) => wishlist.user)
+  @Field((type) => [Wishlist])
   public wishlists: Wishlist[];
 }
 

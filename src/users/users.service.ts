@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import User from '../users/user.entity';
-import CreateUserDto from './dto/users.dto';
+import UserDto from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,14 +22,17 @@ export class UsersService {
     );
   }
 
-  async create(userData: CreateUserDto) {
+  async create(userData: UserDto) {
     const newUser = await this.usersRepository.create(userData);
     await this.usersRepository.save(newUser);
     return newUser;
   }
 
   async getById(id: string) {
-    const user = await this.usersRepository.findOne({ where: { id } });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['wishlists'],
+    });
     if (user) {
       return user;
     }

@@ -25,6 +25,7 @@ class Wishlist {
   public movies: Movie[];
 
   @ManyToOne(() => User, (user: User) => user.wishlists)
+  @Field((type) => User)
   public user: User;
 }
 
