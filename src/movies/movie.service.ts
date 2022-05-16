@@ -5,7 +5,8 @@ import { first, map, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
 import { MovieInput } from './dto/movies.input';
 import Movie from './movie.entity';
-import { APIMovieData } from './movie.model';
+import { APIMovie, APIMovieData, Params } from './movie.model';
+import { endpoints, getUrl } from './movies.helpers';
 
 @Injectable()
 export class MovieService {
@@ -37,25 +38,31 @@ export class MovieService {
     }
   }
 
-  getPopularMovies(page: number): Observable<APIMovieData[]> {
-    return this.httpService
-      .get(
-        `https://api.themoviedb.org/3/movie/popular?api_key=e9b6907feb6085e090a0e8937877039b&language=en-US&page=${page}`,
-      )
-      .pipe(
-        map(({ data }) => data),
-        first(),
-      );
+  getPopularMovies(params: Params): Observable<APIMovieData[]> {
+    return this.httpService.get(getUrl(endpoints.popular, params)).pipe(
+      map(({ data }) => data),
+      first(),
+    );
   }
 
-  getUpcoming(page: number): Observable<APIMovieData[]> {
-    return this.httpService
-      .get(
-        `https://api.themoviedb.org/3/movie/upcoming?api_key=e9b6907feb6085e090a0e8937877039b&language=en-US&page=${page}`,
-      )
-      .pipe(
-        map(({ data }) => data),
-        first(),
-      );
+  getUpcoming(params: Params): Observable<APIMovieData[]> {
+    return this.httpService.get(getUrl(endpoints.upcoming, params)).pipe(
+      map(({ data }) => data),
+      first(),
+    );
+  }
+
+  getMovieDetails(params: Params): Observable<APIMovie> {
+    return this.httpService.get(getUrl(endpoints.movie, params)).pipe(
+      map(({ data }) => data),
+      first(),
+    );
+  }
+
+  getMoviesByParams(params: Params): Observable<APIMovie> {
+    return this.httpService.get(getUrl(endpoints.discoverMovie, params)).pipe(
+      map(({ data }) => data),
+      first(),
+    );
   }
 }

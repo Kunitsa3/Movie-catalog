@@ -47,10 +47,21 @@ type APIMovie {
 }
 
 type Query {
-  popularMovies(page: Int!): APIMovieData!
-  upcomingMovies(page: Int!): APIMovieData!
+  popularMovies(params: Params!): APIMovieData!
+  upcomingMovies(params: Params!): APIMovieData!
+  getMovieDetails(params: Params!): APIMovie!
+  getMoviesByParams(params: Params!): APIMovieData!
   wishlists: [Wishlist!]!
   wishlist(id: String!): Wishlist!
+}
+
+input Params {
+  page: Int
+  id: Int
+  year: Int
+  genres: [String!]
+  withoutGenres: [String!]
+  sortBy: String
 }
 
 type Mutation {

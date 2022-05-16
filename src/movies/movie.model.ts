@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, InputType, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class APIMovieData {
@@ -43,4 +43,20 @@ export class APIMovie {
   vote_average: number;
   @Field((type) => Int)
   vote_count: number;
+}
+
+@InputType()
+export class Params {
+  @Field((type) => Int, { nullable: true })
+  page?: number;
+  @Field((type) => Int, { nullable: true })
+  id?: number;
+  @Field((type) => Int, { nullable: true })
+  year?: number;
+  @Field((type) => [String], { nullable: true })
+  genres?: string[];
+  @Field((type) => [String], { nullable: true })
+  withoutGenres?: string[];
+  @Field({ nullable: true })
+  sortBy?: string;
 }
