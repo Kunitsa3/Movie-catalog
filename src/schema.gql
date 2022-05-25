@@ -46,10 +46,60 @@ type APIMovie {
   vote_count: Int!
 }
 
+type MovieDetails {
+  adult: Boolean!
+  backdrop_path: String
+  budget: Int!
+  genres: [Genre!]!
+  homepage: String
+  id: Int!
+  imdb_id: String!
+  original_language: String
+  original_title: String!
+  overview: String
+  popularity: Int!
+  poster_path: String!
+  production_companies: [ProductionCompany!]
+  production_countries: [ProductionCountry!]!
+  release_date: String!
+  revenue: Int!
+  runtime: Int
+  spoken_languages: [SpokenLanguage!]!
+  status: String!
+  tagline: String
+  title: String!
+  video: Boolean!
+  vote_average: Int!
+  vote_count: Int!
+}
+
+type Genre {
+  id: Int!
+  name: String!
+}
+
+type ProductionCompany {
+  id: Int!
+  logo_path: String
+  name: String!
+  origin_country: String!
+}
+
+type ProductionCountry {
+  iso_3166_1: String!
+  name: String!
+}
+
+type SpokenLanguage {
+  english_name: String!
+  iso_639_1: String!
+  name: String!
+}
+
 type Query {
   popularMovies(params: Params!): APIMovieData!
   upcomingMovies(params: Params!): APIMovieData!
-  getMovieDetails(params: Params!): APIMovie!
+  getMovieDetails(params: Params!): MovieDetails!
   getMoviesByParams(params: Params!): APIMovieData!
   wishlists: [Wishlist!]!
   wishlist(id: String!): Wishlist!

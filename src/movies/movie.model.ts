@@ -60,3 +60,93 @@ export class Params {
   @Field({ nullable: true })
   sortBy?: string;
 }
+
+@ObjectType()
+export class MovieDetails {
+  @Field()
+  adult: boolean;
+  @Field({ nullable: true })
+  backdrop_path: string;
+  @Field((type) => Int)
+  budget: number;
+  @Field((type) => [Genre])
+  genres: Genre[];
+  @Field({ nullable: true })
+  homepage: string;
+  @Field((type) => Int)
+  id: number;
+  @Field()
+  imdb_id: string;
+  @Field({ nullable: true })
+  original_language: string;
+  @Field()
+  original_title: string;
+  @Field({ nullable: true })
+  overview: string;
+  @Field((type) => Int)
+  popularity: number;
+  @Field()
+  poster_path: string;
+  @Field((type) => [ProductionCompany], { nullable: true })
+  production_companies: ProductionCompany[];
+  @Field((type) => [ProductionCountry])
+  production_countries: ProductionCountry[];
+  @Field()
+  release_date: string;
+  @Field((type) => Int)
+  revenue: number;
+  @Field((type) => Int, { nullable: true })
+  runtime: number;
+  @Field((type) => [SpokenLanguage])
+  spoken_languages: SpokenLanguage[];
+  @Field()
+  status: string;
+  @Field({ nullable: true })
+  tagline: string;
+  @Field()
+  title: string;
+  @Field()
+  video: boolean;
+  @Field((type) => Int)
+  vote_average: number;
+  @Field((type) => Int)
+  vote_count: number;
+}
+
+@ObjectType()
+export class Genre {
+  @Field((type) => Int)
+  id: number;
+  @Field()
+  name: string;
+}
+
+@ObjectType()
+export class ProductionCompany {
+  @Field((type) => Int)
+  id: number;
+  @Field({ nullable: true })
+  logo_path: string;
+  @Field()
+  name: string;
+  @Field()
+  origin_country: string;
+}
+
+@ObjectType()
+export class ProductionCountry {
+  @Field()
+  iso_3166_1: string;
+  @Field()
+  name: string;
+}
+
+@ObjectType()
+export class SpokenLanguage {
+  @Field()
+  english_name: string;
+  @Field()
+  iso_639_1: string;
+  @Field()
+  name: string;
+}

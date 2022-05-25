@@ -1,6 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { MovieService } from 'src/movies/movie.service';
-import { APIMovie, APIMovieData, Params } from './movie.model';
+import { MovieDetails, APIMovieData, Params } from './movie.model';
 
 @Resolver(() => APIMovieData)
 export class MovieResolver {
@@ -18,7 +18,7 @@ export class MovieResolver {
     return movies;
   }
 
-  @Query(() => APIMovie)
+  @Query(() => MovieDetails)
   async getMovieDetails(@Args('params') params: Params) {
     const movie = await this.movieService.getMovieDetails(params);
     return movie;

@@ -5,7 +5,7 @@ import { first, map, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
 import { MovieInput } from './dto/movies.input';
 import Movie from './movie.entity';
-import { APIMovie, APIMovieData, Params } from './movie.model';
+import { APIMovie, APIMovieData, MovieDetails, Params } from './movie.model';
 import { endpoints, getUrl } from './movies.helpers';
 
 @Injectable()
@@ -52,7 +52,7 @@ export class MovieService {
     );
   }
 
-  getMovieDetails(params: Params): Observable<APIMovie> {
+  getMovieDetails(params: Params): Observable<MovieDetails> {
     return this.httpService.get(getUrl(`${endpoints.movie}/${params.id}`)).pipe(
       map(({ data }) => data),
       first(),
