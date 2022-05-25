@@ -65,9 +65,8 @@ input Params {
 }
 
 type Mutation {
-  register(userData: RegisterInput!): User!
-  logIn(userData: LogInInput!): User!
-  logOut: User!
+  register(userData: RegisterInput!): String!
+  logIn(userData: LogInInput!): String!
   createWishlist(wishlistData: CreateWishlistInput!): Wishlist!
   updateWishlist(wishlistData: WishlistInput!): Wishlist!
   addMovieToWishlist(wishlistData: WishlistInput!, movieData: MovieInput!): Wishlist!

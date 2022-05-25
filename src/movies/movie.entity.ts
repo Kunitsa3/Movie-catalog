@@ -21,7 +21,7 @@ class Movie {
 
   @ManyToMany(() => Wishlist, (wishlist: Wishlist) => wishlist.movies)
   @JoinTable()
-  @Field((type) => [Wishlist])
+  @Field(() => [Wishlist])
   public wishlists: Wishlist[];
 }
 

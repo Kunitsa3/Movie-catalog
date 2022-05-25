@@ -53,7 +53,7 @@ export class MovieService {
   }
 
   getMovieDetails(params: Params): Observable<APIMovie> {
-    return this.httpService.get(getUrl(endpoints.movie, params)).pipe(
+    return this.httpService.get(getUrl(`${endpoints.movie}/${params.id}`)).pipe(
       map(({ data }) => data),
       first(),
     );
